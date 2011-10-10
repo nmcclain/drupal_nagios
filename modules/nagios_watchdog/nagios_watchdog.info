@@ -1,0 +1,5 @@
+name = Nagios watchdog log monitoring
+description = Extends nagios monitoring to watchdog log
+core = 7.x
+package = "Monitoring"
+

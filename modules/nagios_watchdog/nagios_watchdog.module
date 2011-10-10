@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * Implements hook_nagios_info().
+ */
+function nagios_watchdog_nagios_info() {
+  return array(
+    'name' => 'Watchdog monitoring',
+    'id' => 'WATCHDOG',
+  );
+}
+
+/* 
+NAGIOS_STATUS_OK,
+NAGIOS_STATUS_WARNING,
+NAGIOS_STATUS_CRITICAL,
+NAGIOS_STATUS_UNKNOWN,
+ */
+
+/**
+ * Implements hook_nagios().
+ */
+function nagios_watchdog_nagios() {
+  $status = array();
+  $data = array(
+    'status' => NAGIOS_STATUS_CRITICAL,
+    'type' => 'perf',
+    'text' => 12,
+  );
+
+  $status['WD_ERR'] = $data;
+
+  return $status;
+}
+

@@ -1,0 +1,70 @@
+<?php
+
+
+/**
+ * Implements hook_nagios_info().
+ */
+function nagios_nagios_info() {
+  return array(
+    'name' => 'Nagios monitoring',
+    'id' => 'NAGIOS',
+  );
+}
+
+/**
+ * Implements hook_nagios_settings().
+ */
+function nagios_nagios_settings() {
+  foreach (nagios_functions() as $function => $description) {
+    $var = 'nagios_func_' . $function;
+    $form[$var] = array(
+      '#type' => 'checkbox',
+      '#title' => $function,
+      '#default_value' => variable_get($var, TRUE),
+      '#description' => $description,
+    );
+  }
+
+  $group = 'thresholds';
+  $form[$group] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#title' => t('Thresholds'),
+    '#description' => t('Thresholds for reporting critical alerts to Nagios.'),
+  );
+
+  $form[$group]['nagios_cron_duration'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Cron duration'),
+    '#default_value' => variable_get('nagios_cron_duration', 60),
+    '#description' => t('Issue a critical alert when cron has not been running for this duration (in minutes). Default is 60 minutes.'),
+  );
+
+  $form[$group]['nagios_min_report_severity'] = array(
+    '#type' => 'select',
+    '#title' => t('Mininum report severity'),
+    '#default_value' => variable_get('nagios_min_report_severity', NAGIOS_STATUS_WARNING),
+    '#options' => nagios_status(),
+    '#description' => t('Issue an alert only for this minimum severity, not for lower severities.'),
+  );
+
+  return $form;
+}
+
+/**
+ * Implements hook_nagios().
+ */
+function nagios_nagios() {
+  $status = array();
+  foreach (nagios_functions() as $function => $description) {
+    if (variable_get('nagios_func_' . $function, TRUE)) {
+      $func = 'nagios_check_' . $function;
+      $result = $func();
+      $status[$result['key']] = $result['data'];
+    }
+  }
+
+  return $status;
+}
+
