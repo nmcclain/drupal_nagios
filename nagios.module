@@ -407,6 +407,7 @@ function nagios_check_requirements() {
   $unknown = FALSE;
   $min_severity = variable_get('nagios_min_report_severity', NAGIOS_STATUS_OK) - 1;
   foreach ($reqs as $key => $requirement) {
+    if (!isset($requirement['description'])) { $requirement['description'] = ''; }
     if (preg_match('/^No information is available/', $requirement['description'])) {
       $unknown = TRUE;
       continue;

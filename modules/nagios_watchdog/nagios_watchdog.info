@@ -1,5 +1,6 @@
 name = Nagios watchdog log monitoring
 description = Extends nagios monitoring to watchdog log
 core = 7.x
+dependencies[] = "nagios"
 package = "Monitoring"
 

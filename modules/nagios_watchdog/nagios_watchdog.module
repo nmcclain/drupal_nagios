@@ -21,15 +21,31 @@ NAGIOS_STATUS_UNKNOWN,
  * Implements hook_nagios().
  */
 function nagios_watchdog_nagios() {
+  include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'dblog') . '/dblog.admin.inc';
+
+  $log_entries = dblog_overview();
+
+  $summary = array();
+  foreach ( $log_entries["dblog_table"]["#rows"] as $id => $log_entry) {
+    $log_level = $log_entry['class'][1];
+    if (!isset($summary[$log_level])) { $summary[$log_level]=0; }
+    $summary[$log_level]++;
+  }
+  #var_dump($summary);
+
   $status = array();
   $data = array(
-    'status' => NAGIOS_STATUS_CRITICAL,
+    'status' => NAGIOS_STATUS_OK,
     'type' => 'perf',
-    'text' => 12,
+    'text' => join(', ', $summary),
   );
 
   $status['WD_ERR'] = $data;
 
   return $status;
 }
+
+
+
+
 
